@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="facebook_app_id">405197245070752</string>
+    <string name="fb_login_protocol_scheme">fb405197245070752</string>
+    <string name="facebook_client_token">3d1db4c7c6a951d6ee57a6692eb0ba6c</string>
+    <string name="app_name">Instagram Colon</string>
+
+
+</resources>
