@@ -6,10 +6,16 @@ import 'package:instagram_colon/state/auth/models/auth_result.dart';
 import 'package:instagram_colon/state/posts/typedef/user_id.dart';
 
 class Authenticator {
+  const Authenticator();
+
   User? get currentUser => FirebaseAuth.instance.currentUser;
+
   UserId? get userId => currentUser?.uid;
+
   bool get isAlreadyLoggedIn => userId != null;
+
   String get displayName => currentUser?.displayName ?? '';
+
   String? get email => currentUser?.email;
 
   Future<AuthResult> loginWithGoogle() async {
@@ -18,10 +24,13 @@ class Authenticator {
         Constants.emailScope,
       ],
     );
+
     final GoogleSignInAccount? signInAccount = await googleSignIn.signIn();
+
     if (signInAccount == null) {
       return AuthResult.aborted;
     }
+
     final GoogleSignInAuthentication googleAuth =
         await signInAccount.authentication;
 
@@ -34,19 +43,21 @@ class Authenticator {
       await FirebaseAuth.instance.signInWithCredential(oAuthCredentials);
       return AuthResult.success;
     } catch (e) {
-
       return AuthResult.failure;
     }
   }
 
   Future<AuthResult> loginWithFaceBook() async {
     final loginResult = await FacebookAuth.instance.login();
+
     final token = loginResult.accessToken?.token;
+
     if (token == null) {
       return AuthResult.aborted;
     }
 
     final oAuthCredentials = FacebookAuthProvider.credential(token);
+
     try {
       await FirebaseAuth.instance.signInWithCredential(oAuthCredentials);
       return AuthResult.success;
@@ -73,8 +84,10 @@ class Authenticator {
   }
 
   Future<void> logout() async {
-    await FirebaseAuth.instance.signOut();
-    await GoogleSignIn().signOut();
-    await FacebookAuth.instance.logOut();
+    await Future.wait([
+      FirebaseAuth.instance.signOut(),
+      GoogleSignIn().signOut(),
+      FacebookAuth.instance.logOut(),
+    ]);
   }
 }
