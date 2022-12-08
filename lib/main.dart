@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instagram_colon/state/auth/providers/auth_state_provider.dart';
 import 'package:instagram_colon/state/auth/providers/is_logged_in_provider.dart';
+import 'package:instagram_colon/views/components/constants/loading/loading_screen.dart';
 import 'firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
@@ -43,13 +44,7 @@ class MyApp extends ConsumerWidget {
         indicatorColor: Colors.blueGrey,
       ),
       themeMode: ThemeMode.dark,
-      home: authState.isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : isLoggedIn
-              ? const MainView()
-              : const LoginView(),
+      home: isLoggedIn ? const MainView() : const LoginView(),
     );
   }
 }
@@ -63,14 +58,12 @@ class MainView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Main View'),
       ),
-      body: Consumer(
-        builder: ((context, ref, child) {
-          return TextButton(
-            onPressed: ref.read(authStateProvider.notifier).logout,
-            child: const Text('Logout'),
-          );
-        }),
-      ),
+      body: Consumer(builder: (context, ref, child) {
+        return TextButton(
+          onPressed: ref.read(authStateProvider.notifier).logout,
+          child: const Text('Logout'),
+        );
+      }),
     );
   }
 }
