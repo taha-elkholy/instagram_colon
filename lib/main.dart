@@ -3,7 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instagram_colon/state/auth/providers/auth_state_provider.dart';
 import 'package:instagram_colon/state/auth/providers/is_logged_in_provider.dart';
-import 'package:instagram_colon/views/components/constants/loading/loading_screen.dart';
+import 'package:instagram_colon/state/providers/is_loading_provider.dart';
+import 'package:instagram_colon/views/components/loading/loading_screen.dart';
 import 'firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
@@ -23,13 +24,11 @@ void main() async {
   );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
-    final isLoggedIn = ref.watch(isLoggedInProvider);
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Instagram',
       debugShowCheckedModeBanner: false,
@@ -44,7 +43,28 @@ class MyApp extends ConsumerWidget {
         indicatorColor: Colors.blueGrey,
       ),
       themeMode: ThemeMode.dark,
-      home: isLoggedIn ? const MainView() : const LoginView(),
+      home: Consumer(
+        builder: (context, ref, child) {
+          // take care of display loading screen
+          // ignore: todo
+          // todo: fix un removing loading dialog 
+          ref.listen<bool>(
+            isLoadingProvider,
+            (_, isLoading) {
+              if (isLoading) {
+                LoadingScreen.instance().show(
+                  context: context,
+                );
+              } else {
+                LoadingScreen.instance().hide();
+              }
+            },
+          );
+
+          final isLoggedIn = ref.watch(isLoggedInProvider);
+          return isLoggedIn ? const MainView() : const LoginView();
+        },
+      ),
     );
   }
 }

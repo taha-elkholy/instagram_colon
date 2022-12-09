@@ -59,7 +59,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       _userInfoStorage.saveUserInfo(
           userId: userId,
           displayName: _authenticator.displayName,
-          email: _authenticator.email);
+          email: _authenticator.email,
+          );
 
   Future<void> logout() async {
     state = state.copiedWithIsLoading(true);
