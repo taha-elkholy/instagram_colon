@@ -1,24 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:instagram_colon/views/components/loading/loading_screen_controller.dart';
 import 'package:instagram_colon/views/components/constants/strings.dart';
+import 'package:instagram_colon/views/components/loading/loading_screen_controller.dart';
 
 class LoadingScreen {
   LoadingScreen._sharedInstance();
   static final LoadingScreen _shared = LoadingScreen._sharedInstance();
   factory LoadingScreen.instance() => _shared;
 
-  LoadingScreenController? _controller;
+  LoadingScreenController? controller;
 
   void show({
     required BuildContext context,
     String text = Strings.loading,
   }) {
-    if (_controller?.update(text) ?? false) {
+    if (controller?.update(text) ?? false) {
       return;
     } else {
-      _controller = showOverlay(
+      controller = showOverlay(
         context: context,
         text: text,
       );
@@ -26,21 +26,21 @@ class LoadingScreen {
   }
 
   void hide() {
-    _controller?.close;
-    _controller = null;
+    controller?.close();
+    controller = null;
   }
 
   LoadingScreenController? showOverlay({
     required BuildContext context,
     required String text,
   }) {
+    final textController = StreamController<String>();
+    textController.add(text);
+
     final state = Overlay.of(context);
     if (state == null) {
       return null;
     }
-    final textController = StreamController<String>();
-    textController.add(text);
-
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
 
@@ -57,43 +57,37 @@ class LoadingScreen {
               ),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(
-                  10,
-                ),
+                borderRadius: BorderRadius.circular(10.0),
               ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const CircularProgressIndicator(),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    StreamBuilder<String>(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 10),
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 20),
+                      StreamBuilder(
                         stream: textController.stream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
-                              snapshot.requireData,
+                              snapshot.data as String,
+                              textAlign: TextAlign.center,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium
-                                  ?.copyWith(
-                                    color: Colors.black,
-                                  ),
+                                  ?.copyWith(color: Colors.black),
                             );
                           } else {
-                            return const SizedBox();
+                            return Container();
                           }
-                        }),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  ],
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -101,7 +95,9 @@ class LoadingScreen {
         );
       },
     );
+
     state.insert(overlay);
+
     return LoadingScreenController(
       close: () {
         textController.close();

@@ -5,6 +5,7 @@ import 'package:instagram_colon/state/auth/providers/auth_state_provider.dart';
 import 'package:instagram_colon/state/auth/providers/is_logged_in_provider.dart';
 import 'package:instagram_colon/state/providers/is_loading_provider.dart';
 import 'package:instagram_colon/views/components/loading/loading_screen.dart';
+import 'package:instagram_colon/views/login/login_view.dart';
 import 'firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
@@ -46,8 +47,6 @@ class MyApp extends StatelessWidget {
       home: Consumer(
         builder: (context, ref, child) {
           // take care of display loading screen
-          // ignore: todo
-          // todo: fix un removing loading dialog 
           ref.listen<bool>(
             isLoadingProvider,
             (_, isLoading) {
@@ -84,36 +83,6 @@ class MainView extends StatelessWidget {
           child: const Text('Logout'),
         );
       }),
-    );
-  }
-}
-
-class LoginView extends StatelessWidget {
-  const LoginView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login View'),
-      ),
-      body: Consumer(
-        builder: ((context, ref, child) {
-          return Column(
-            children: [
-              TextButton(
-                onPressed: ref.read(authStateProvider.notifier).loginWithGoogle,
-                child: const Text('Login with Google'),
-              ),
-              TextButton(
-                onPressed:
-                    ref.read(authStateProvider.notifier).loginWithFaceBook,
-                child: const Text('Login with FaceBook'),
-              ),
-            ],
-          );
-        }),
-      ),
     );
   }
 }
