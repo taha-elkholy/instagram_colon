@@ -7,11 +7,7 @@ import 'package:instagram_colon/state/providers/is_loading_provider.dart';
 import 'package:instagram_colon/views/components/loading/loading_screen.dart';
 import 'package:instagram_colon/views/login/login_view.dart';
 import 'firebase_options.dart';
-import 'dart:developer' as devtools show log;
 
-extension Log on Object {
-  void log() => devtools.log(toString());
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -19,10 +19,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
   }
 
+// todo: loading exception if cancel
   Future<void> loginWithGoogle() async {
     state = state.copiedWithIsLoading(true);
     final result = await _authenticator.loginWithGoogle();
-    print(result.name);
     final userId = _authenticator.userId;
     if (result == AuthResult.success && userId != null) {
       // save user data to firebase
